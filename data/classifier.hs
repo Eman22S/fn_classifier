@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-import qualified Data.Text as T
 import Data.List
 
 main :: IO ()
@@ -8,19 +6,16 @@ main = do
 	print(removestopwords dataset)
 
 stopwords = ["the","a", "and", "is", "be", "will","Is"]
-nums :: T.Text
-nums = "012345678910!@#$%^&*()_-+=?"
-punctuations = ["!","?", ":", ";" ,"(", ")", "-", "_"  ]
-nonstopwords :: T.Text -> Bool
-nonstopwords text = text `notElem` stopwords 
+nums :: String
+nums = "01234567891)(*&^%$#@!-+_=?:;"
 
 
-removestopwords :: [T.Text]  -> [T.Text]
+removestopwords :: [String]  -> [String]
 removestopwords [] = []
 removestopwords (x:xs) = 
-	let tmp = T.words x
-	    y = filter nonstopwords tmp 
-	    wrap = T.unwords y 
-	    h = T.filter (notElem  "aeiou") wrap 
+	let tmp = words x
+	    y = filter (`notElem` stopwords) tmp 
+	    wrap = unwords y 
+	    h = filter (`notElem`  nums) wrap 
 	in  h :removestopwords xs
 
