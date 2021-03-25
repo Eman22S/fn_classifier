@@ -52,10 +52,10 @@ getindices vocabs = L.foldr (\x acc   -> (index x) : acc ) [] vocabs
 index :: String -> Int
 index x=(\(Just i) -> i) $ M.lookup x  dict
 results = getindices vocabs
-zeros:: [Int]
+zeros:: [Float]
 zeros = L.replicate (length $ getindices vocabs) 0
 
-onehotencoder :: [Int] -> [Int] ->[ [Int]]
+onehotencoder ::Num q=> [Int] -> [q] ->[[q]]
 onehotencoder xs zs = L.foldr (\x acc -> insertAt zs 1 x: acc) [] xs
 
 insertAt :: [a] -> a -> Int -> [a]
@@ -64,4 +64,17 @@ insertAt (x:xs) elem pos
     | pos == 1  = elem : x : xs
     | pos > 1 = x : insertAt xs elem (pos - 1) 
     | otherwise = x : insertAt xs elem ((pos) + length (x:xs) )
-
+----(19,20)
+----(_, 20)
+ran :: [Float]
+ran = L.replicate (length $ getindices vocabs) 0.06
+matrix_gen :: Num j=> [j] -> [j] -> [[j]]
+matrix_gen ws zs = L.foldr(\x acc -> zs:acc) [] ws
+input = onehotencoder results zeros
+--output = input * weight
+b = 0.3
+simple_dense::[Float] -> [Float] -> [Float]
+simple_dense [] _ = []
+simple_dense _ [] =[]
+simple_dense [] [] = []
+simple_dense  (x:xs) (y:ys) = x * y + b : simple_dense xs ys
