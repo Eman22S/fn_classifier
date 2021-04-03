@@ -78,15 +78,11 @@ softmax_denom = sum $ map exp $ input !! 0
 softmax_activation :: [Float] -> [Float]
 softmax_activation xs = foldr (\x acc -> (exp x)/softmax_denom :acc) [] xs
 
-cross_entropy_loss :: [Float] -> [Float] -> [Float]
-cross_entropy_loss [] _ = []
-cross_entropy_loss _ [] = []
-cross_entropy_loss [] [] = []
-cross_entropy_loss (x:xs) (y:ys) = 
-		let p = [1-x,x]
-		    q = [1-y,y]
-		    zipped = zipWith (\x y -> x * log y) p q	
-		in zipped !!0 - zipped !! 1 : cross_entropy_loss xs ys
+grad_cross_entropy_loss :: [Float] -> [Float] -> [Float]
+grad_cross_entropy_loss [] _ = []
+grad_cross_entropy_loss _ [] = []
+grad_cross_entropy_loss [] [] = []
+grad_cross_entropy_loss (x:xs) (y:ys) = -(y/x) + (1-y)/(1-x):grad_cross_entropy_loss xs ys
 
 expected = input !! 0
 predicted = softmax_activation expected
@@ -94,7 +90,7 @@ predicted = softmax_activation expected
 -- T0D0 softmax should accept the values from the NN 
 -- TODOcurrent expected is wrong
 --T0D0 target or expected should be yss onehote encoding
-cost = cross_entropy_loss expected predicted
+cost = grad_cross_entropy_loss expected predicted
 m_prev :: Float
 m_prev = 0.0
 v_prev :: Float
